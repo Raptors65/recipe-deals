@@ -2,7 +2,7 @@ import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import prisma from '@/lib/prisma';
 import { FindByIngredientsRecipe, RecipeInformation } from '@/types/spoonacular';
-import { getLoblawsDeals, getLoblawsStores } from '@/lib/loblaws';
+import { getLoblawsDeals } from '@/lib/loblaws';
 import { getRecipeInfoBulk, getRecipes } from '@/lib/spoonacular';
 import RecipeResult from '@/components/recipe_result';
 import { Badge, Price } from '@/types/loblaws';
@@ -108,16 +108,6 @@ export const getStaticProps: GetStaticProps<LoblawsStoreProps> = async (context)
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const stores = await getLoblawsStores();
-  const paths = stores
-    .filter((store) => store.visible)
-    .map((store) => ({ params: { storeID: store.id } }));
-
-  return {
-    paths,
-    fallback: 'blocking',
-  };
-};
+export const getStaticPaths: GetStaticPaths = async () => ({ paths: [], fallback: 'blocking' });
 
 export default LoblawsStore;
