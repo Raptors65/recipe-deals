@@ -1,6 +1,6 @@
-import { Store } from '@/types/loblaws';
 import Link from 'next/link';
 import React from 'react';
+import { Store } from '@/types/loblaws';
 
 type LoblawsStoreInfoProps = {
   store: Store

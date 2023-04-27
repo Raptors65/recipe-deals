@@ -32,7 +32,7 @@ export default function RecipeResult({ recipe, link, ingredients }: RecipeResult
             (usedIngredient) => ingredients.find(
               (ingredient) => ingredient.id === usedIngredient.id,
             )?.ingredient || usedIngredient.name,
-          )}
+          ).join(', ')}
           {' '}
           {/* TODO: this won't work if the IDs are different AND the usedIngredient.name
           makes no sense */}

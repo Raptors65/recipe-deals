@@ -18,7 +18,7 @@ export default function SelectStore({ stores }: SelectStoreProps) {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />
-      <div className="w-1/2 flex-wrap">
+      <div className="w-full flex-wrap">
         {stores.filter((store) => (store.name.toLowerCase().includes(query)
                                   || store.address.formattedAddress.toLowerCase().includes(query)))
           .slice(0, 10).map((store) => (
