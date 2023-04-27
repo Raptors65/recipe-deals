@@ -1,6 +1,6 @@
 import { GetStaticProps } from 'next';
 import React, { useState } from 'react';
-import { getLoblawsStores } from '@/api/loblaws';
+import { getLoblawsStores } from '@/lib/loblaws';
 import LoblawsStoreInfo from '@/components/loblaws_store_info';
 import { Store } from '@/types/loblaws';
 

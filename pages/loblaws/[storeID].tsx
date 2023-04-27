@@ -2,8 +2,8 @@ import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import prisma from '@/lib/prisma';
 import { FindByIngredientsRecipe, RecipeInformation } from '@/types/spoonacular';
-import { getLoblawsDeals } from '@/api/loblaws';
-import { getRecipeInfoBulk, getRecipes } from '@/api/spoonacular';
+import { getLoblawsDeals } from '@/lib/loblaws';
+import { getRecipeInfoBulk, getRecipes } from '@/lib/spoonacular';
 import RecipeResult from '@/components/recipe_result';
 import { Badge, Price } from '@/types/loblaws';
 
