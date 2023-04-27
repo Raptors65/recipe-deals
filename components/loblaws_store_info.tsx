@@ -1,0 +1,28 @@
+import { Store } from '@/types/loblaws';
+import Link from 'next/link';
+import React from 'react';
+
+type LoblawsStoreInfoProps = {
+  store: Store
+};
+
+export default function LoblawsStoreInfo({ store }: LoblawsStoreInfoProps) {
+  return (
+    <div className="flex w-full justify-between gap-x-5 border-2 p-5">
+      <div>
+        <h1>{store.name}</h1>
+        <p>{store.address.formattedAddress}</p>
+        <p>{store.openNowResponseData.hours}</p>
+      </div>
+      <div>
+        <Link href={`/loblaws/${store.id}`}>
+          <button className="bg-red-600 text-white p-2 rounded" type="button">
+            Select
+            <br />
+            Location
+          </button>
+        </Link>
+      </div>
+    </div>
+  );
+}
