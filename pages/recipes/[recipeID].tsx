@@ -1,8 +1,8 @@
 import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Link from 'next/link';
 import { RecipeInformation } from '@/types/spoonacular';
 import { getRecipeInfo } from '@/api/spoonacular';
-import Link from 'next/link';
 
 type RecipeProps = {
   recipe: RecipeInformation
