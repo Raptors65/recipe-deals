@@ -108,6 +108,19 @@ export const getStaticProps: GetStaticProps<LoblawsStoreProps> = async (context)
   };
 };
 
+// TODO: add back this code if I ever start paying for the API.
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const stores = await getLoblawsStores();
+//   const paths = stores
+//     .filter((store) => store.visible)
+//     .map((store) => ({ params: { storeID: store.id } }));
+
+//   return {
+//     paths,
+//     fallback: 'blocking',
+//   };
+// };
+
 export const getStaticPaths: GetStaticPaths = async () => ({ paths: [], fallback: 'blocking' });
 
 export default LoblawsStore;

@@ -7,6 +7,12 @@ const nextConfig = {
         hostname: 'spoonacular.com',
         port: '',
         pathname: '/recipeImages/*'
+      },
+      {
+        protocol: 'https',
+        hostname: 'tailwindui.com',
+        port: '',
+        pathname: '/img/logos/*'
       }
     ]
   },
