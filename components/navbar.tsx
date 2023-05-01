@@ -13,7 +13,7 @@ import classNames from 'classnames';
 
 const chains = [
   {
-    name: 'Loblaws', description: 'Ontario, Alberta, British Columbia', href: '/select_stores', icon: '/images/loblaws.svg',
+    name: 'Loblaws', description: 'Ontario, Alberta, British Columbia', href: '/select_store', icon: '/images/loblaws.svg',
   },
 ];
 
@@ -21,7 +21,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white fixed w-full top-0 border-b-2">
+    <header className="bg-white fixed w-full top-0 border-b-2 z-10">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
@@ -66,10 +66,10 @@ export default function Navbar() {
                         <Image width={24} height={24} className="text-gray-600 group-hover:text-indigo-600" src={item.icon} aria-hidden="true" alt="" />
                       </div>
                       <div className="flex-auto">
-                        <Link href={item.href} className="block font-semibold text-gray-900">
+                        <Popover.Button as={Link} href={item.href} className="block font-semibold text-gray-900">
                           {item.name}
                           <span className="absolute inset-0" />
-                        </Link>
+                        </Popover.Button>
                         <p className="mt-1 text-gray-600">{item.description}</p>
                       </div>
                     </div>
