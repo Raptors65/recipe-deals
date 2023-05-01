@@ -1,5 +1,6 @@
 import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Head from 'next/head';
 import prisma from '@/lib/prisma';
 import { FindByIngredientsRecipe, RecipeInformation } from '@/types/spoonacular';
 import { getLoblawsDeals } from '@/lib/loblaws';
@@ -20,6 +21,9 @@ function LoblawsStore({ deals, recipes, recipesInfo }: LoblawsStoreProps) {
 
   return (
     <>
+      <Head>
+        <title>Deals at Loblaws</title>
+      </Head>
       <p>The following are on sale:</p>
       <table className="table-auto">
         <thead>

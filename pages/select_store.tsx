@@ -1,5 +1,6 @@
 import { GetStaticProps } from 'next';
 import React, { useState } from 'react';
+import Head from 'next/head';
 import { getLoblawsStores } from '@/lib/loblaws';
 import LoblawsStoreInfo from '@/components/loblaws_store_info';
 import { Store } from '@/types/loblaws';
@@ -11,6 +12,9 @@ export default function SelectStore({ stores }: SelectStoreProps) {
 
   return (
     <>
+      <Head>
+        <title>Select Store - Recipe Deals</title>
+      </Head>
       <input
         className="border-2"
         placeholder="Search store..."
