@@ -1,11 +1,11 @@
 import { FindByIngredientsRecipe, RecipeInformation } from '@/types/spoonacular';
 
-export async function getRecipes(ingredients: string[]) {
+export async function getRecipes(ingredients: string[], maxResults: number) {
   const ingredientsQuery = ingredients.join(',');
   const recipesData = new URLSearchParams({
     apiKey: process.env.SPOONACULAR_API_KEY!,
     ingredients: ingredientsQuery,
-    number: '5',
+    number: maxResults.toString(),
     limitLicense: 'true',
     ranking: '1',
     ignorePantry: 'false',

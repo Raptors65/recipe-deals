@@ -1,21 +1,27 @@
 import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
+import { Disclosure } from '@headlessui/react';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 import prisma from '@/lib/prisma';
-import { FindByIngredientsRecipe, RecipeInformation } from '@/types/spoonacular';
 import { getLoblawsDeals } from '@/lib/loblaws';
-import { getRecipeInfoBulk, getRecipes } from '@/lib/spoonacular';
-import RecipeResult from '@/components/recipe_result';
 import { Badge, Price } from '@/types/loblaws';
 
 type LoblawsStoreProps = {
-  recipes: FindByIngredientsRecipe[]
-  recipesInfo: RecipeInformation[]
-  deals: { code: string, name: string, ingredient: string, deal: Badge, price: Price,
-    ingredientID: number }[]
+  deals: {
+    ingredient: string,
+    ingredientID: number,
+    itemsOnSale: {
+      code: string,
+      name: string,
+      deal: Badge,
+      price: Price
+    }[]
+  }[]
 };
 
-function LoblawsStore({ deals, recipes, recipesInfo }: LoblawsStoreProps) {
+function LoblawsStore({ deals }: LoblawsStoreProps) {
   // const router = useRouter();
   // const { storeID } = router.query;
 
@@ -25,68 +31,84 @@ function LoblawsStore({ deals, recipes, recipesInfo }: LoblawsStoreProps) {
         <title>Deals at Loblaws</title>
       </Head>
       <p>The following are on sale:</p>
-      <table className="table-auto">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Ingredient</th>
-            <th>Normal Price</th>
-            <th>Deal</th>
-            <th>Expires</th>
-          </tr>
-        </thead>
-        <tbody>
-          {deals.map((deal) => (
-            <tr key={deal.code}>
-              <td>{deal.name}</td>
-              <td>{deal.ingredient}</td>
-              <td>
-                $
-                {deal.price.value}
-                {' '}
-                {deal.price.unit}
-              </td>
-              <td>
-                {deal.deal.name}
-                {' '}
-                -
-                {' '}
-                {deal.deal.text}
-              </td>
-              <td>{deal.deal.expiryDate?.slice(0, 10) || 'N/A'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {recipes.map((recipe, i) => (
-        <RecipeResult
-          key={recipe.id}
-          recipe={recipe}
-          link={recipesInfo[i].spoonacularSourceUrl}
-          ingredients={deals.map((deal) => (
-            { id: deal.ingredientID, ingredient: deal.ingredient }
-          ))}
-        />
-      ))}
+      <ul className="divide-y divide-gray-100 w-1/2">
+        {deals.map((deal) => (
+          <Disclosure
+            as="li"
+            key={deal.ingredientID}
+          >
+            <Disclosure.Button className="hover:bg-gray-100 text-left w-full flex items-center justify-between py-2">
+              <div>
+                <p className="font-bold">{deal.ingredient}</p>
+                <p className="text-sm">
+                  {deal.itemsOnSale.length}
+                  {' '}
+                  item
+                  {deal.itemsOnSale.length !== 1 && 's'}
+                  {' '}
+                  on sale
+                </p>
+              </div>
+              <div>
+                <ChevronDownIcon className="h-6 w-6" />
+              </div>
+            </Disclosure.Button>
+            <Disclosure.Panel className="mb-2">
+              <ul className="list-disc ml-5">
+                {deal.itemsOnSale.map((item) => (
+                  <li className="mb-2" key={item.code}>
+                    <p className="font-semibold">{item.name}</p>
+                    <p className="text-sm">
+                      Normal Price:
+                      {' '}
+                      $
+                      {item.price.value}
+                    </p>
+                    <p className="text-sm">
+                      Deal:
+                      {' '}
+                      {item.deal.text}
+                      {item.deal.name === 'SALE'
+                       && ` (now $${(item.price.value
+                                     - parseFloat(item.deal.text!.substring(item.deal.text!.indexOf('$') + 1))).toFixed(2)})`}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                className="bg-gray-100 p-1 rounded hover:bg-gray-200 mt-2 inline-block"
+                href={`/ingredients/${deal.ingredient}`}
+              >
+                Find Recipes
+              </Link>
+            </Disclosure.Panel>
+          </Disclosure>
+        ))}
+      </ul>
     </>
   );
 }
 
 export const getStaticProps: GetStaticProps<LoblawsStoreProps> = async (context) => {
+  // Get all data from Loblaws deals
   const loblawsDeals = await getLoblawsDeals(context.params!.storeID as string);
 
-  const ingredientCodes = loblawsDeals.results
+  // Filter non-deals and get codes
+  const itemCodes = loblawsDeals.results
     .filter((result) => result.badges.dealBadge !== null)
     .map((result) => result.code);
 
-  const matchingLoblawsItems = await prisma.loblawsItem.findMany({
-    where: { code: { in: ingredientCodes } },
+  const matchingDatabaseItems = await prisma.loblawsItem.findMany({
+    where: { code: { in: itemCodes } },
     include: { ingredient: true },
   });
-  const ingredients = matchingLoblawsItems.map((item) => item.ingredient.name);
+
   // Remove duplicate ingredients
-  const uniqueIngredients = ingredients.filter((x, i) => ingredients.indexOf(x) === i);
-  const displayDeals = matchingLoblawsItems
+  const ingredients = matchingDatabaseItems.map((item) => item.ingredient.name);
+  const uniqueIngredients = matchingDatabaseItems
+    .filter((x, i) => ingredients.indexOf(x.ingredient.name) === i);
+  // Filter unnecessary data
+  const dealsData = matchingDatabaseItems
     .map((loblawsItem) => {
       const loblawsInfo = loblawsDeals.results.find((result) => result.code === loblawsItem.code)!;
       return {
@@ -99,14 +121,27 @@ export const getStaticProps: GetStaticProps<LoblawsStoreProps> = async (context)
       };
     });
 
-  const recipes = await getRecipes(uniqueIngredients);
-  const recipesInfo = await getRecipeInfoBulk(recipes.map((recipe) => recipe.id));
+  const itemsByIngredient = uniqueIngredients
+    .map((ingredient) => {
+      // Find items that are this ingredient
+      const ingredientItems = dealsData
+        .filter((deal) => deal.ingredientID === ingredient.ingredient.id);
+      const cleanedDealsData = ingredientItems
+        .map(({
+          code, name, deal, price,
+        }) => ({
+          code, name, deal, price,
+        }));
+      return {
+        ingredient: ingredient.ingredient.name,
+        ingredientID: ingredient.ingredient.id,
+        itemsOnSale: cleanedDealsData,
+      };
+    });
 
   return {
     props: {
-      deals: displayDeals,
-      recipes,
-      recipesInfo,
+      deals: itemsByIngredient,
     },
     revalidate: 60 * 60 * 24 * 7,
   };

@@ -5,7 +5,7 @@ function Layout({ children }: PropsWithChildren) {
   return (
     <>
       <Navbar />
-      <main className="container mx-auto mt-28 w-full md:w-3/4 lg:w-1/2 ">{children}</main>
+      <main className="container mx-auto mt-28 px-4">{children}</main>
     </>
   );
 }

@@ -174,8 +174,8 @@ export type Store = {
   ownerName: string
   partner: null
   pickupType: 'DELIVERY' | 'SELF_SERVE_LIGHT' | 'STORE'
-  storeBannerId: 'loblaw'
-  storeBannerName: 'Loblaws'
+  storeBannerId: 'loblaw' | 'nofrills'
+  storeBannerName: 'Loblaws' | 'No Frills'
   storeId: string
   timeZone: string
   visible: boolean

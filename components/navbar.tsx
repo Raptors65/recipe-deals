@@ -13,7 +13,10 @@ import classNames from 'classnames';
 
 const chains = [
   {
-    name: 'Loblaws', description: 'Ontario, Alberta, British Columbia', href: '/select_store', icon: '/images/loblaws.svg',
+    name: 'Loblaws', description: 'Ontario, Alberta, British Columbia', href: '/select_store?chain=loblaw', icon: '/images/loblaws.svg',
+  },
+  {
+    name: 'No Frills', description: '9 provinces', href: '/select_store?chain=nofrills', icon: '/images/no-frills.svg',
   },
 ];
 
