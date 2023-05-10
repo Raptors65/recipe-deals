@@ -4,8 +4,7 @@ import Head from 'next/head';
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import prisma from '@/lib/prisma';
-import { getLoblawsDeals } from '@/lib/loblaws';
+import { getLoblawsProps } from '@/lib/loblaws';
 import { Badge, Price } from '@/types/loblaws';
 
 type LoblawsStoreProps = {
@@ -13,7 +12,7 @@ type LoblawsStoreProps = {
     ingredient: string,
     ingredientID: number,
     itemsOnSale: {
-      code: string,
+      link: string,
       name: string,
       deal: Badge,
       price: Price
@@ -56,8 +55,8 @@ function LoblawsStore({ deals }: LoblawsStoreProps) {
             <Disclosure.Panel className="mb-2">
               <ul className="list-disc ml-5">
                 {deal.itemsOnSale.map((item) => (
-                  <li className="mb-2" key={item.code}>
-                    <p className="font-semibold">{item.name}</p>
+                  <li className="mb-2" key={item.link}>
+                    <Link href={item.link} className="font-semibold hover:underline">{item.name}</Link>
                     <p className="text-sm">
                       Normal Price:
                       {' '}
@@ -71,6 +70,11 @@ function LoblawsStore({ deals }: LoblawsStoreProps) {
                       {item.deal.name === 'SALE'
                        && ` (now $${(item.price.value
                                      - parseFloat(item.deal.text!.substring(item.deal.text!.indexOf('$') + 1))).toFixed(2)})`}
+                    </p>
+                    <p className="text-sm">
+                      Expires:
+                      {' '}
+                      {item.deal.expiryDate?.slice(0, 10)}
                     </p>
                   </li>
                 ))}
@@ -90,58 +94,11 @@ function LoblawsStore({ deals }: LoblawsStoreProps) {
 }
 
 export const getStaticProps: GetStaticProps<LoblawsStoreProps> = async (context) => {
-  // Get all data from Loblaws deals
-  const loblawsDeals = await getLoblawsDeals(context.params!.storeID as string);
-
-  // Filter non-deals and get codes
-  const itemCodes = loblawsDeals.results
-    .filter((result) => result.badges.dealBadge !== null)
-    .map((result) => result.code);
-
-  const matchingDatabaseItems = await prisma.loblawsItem.findMany({
-    where: { code: { in: itemCodes } },
-    include: { ingredient: true },
-  });
-
-  // Remove duplicate ingredients
-  const ingredients = matchingDatabaseItems.map((item) => item.ingredient.name);
-  const uniqueIngredients = matchingDatabaseItems
-    .filter((x, i) => ingredients.indexOf(x.ingredient.name) === i);
-  // Filter unnecessary data
-  const dealsData = matchingDatabaseItems
-    .map((loblawsItem) => {
-      const loblawsInfo = loblawsDeals.results.find((result) => result.code === loblawsItem.code)!;
-      return {
-        code: loblawsItem.code,
-        name: `${loblawsInfo.brand}, ${loblawsInfo.name}`,
-        ingredient: loblawsItem.ingredient.name,
-        ingredientID: loblawsItem.ingredient.id,
-        deal: loblawsInfo.badges.dealBadge!,
-        price: loblawsInfo.prices.wasPrice || loblawsInfo.prices.price,
-      };
-    });
-
-  const itemsByIngredient = uniqueIngredients
-    .map((ingredient) => {
-      // Find items that are this ingredient
-      const ingredientItems = dealsData
-        .filter((deal) => deal.ingredientID === ingredient.ingredient.id);
-      const cleanedDealsData = ingredientItems
-        .map(({
-          code, name, deal, price,
-        }) => ({
-          code, name, deal, price,
-        }));
-      return {
-        ingredient: ingredient.ingredient.name,
-        ingredientID: ingredient.ingredient.id,
-        itemsOnSale: cleanedDealsData,
-      };
-    });
+  const deals = await getLoblawsProps(context.params!.storeID as string);
 
   return {
     props: {
-      deals: itemsByIngredient,
+      deals,
     },
     revalidate: 60 * 60 * 24 * 7,
   };
