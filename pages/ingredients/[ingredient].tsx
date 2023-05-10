@@ -31,7 +31,14 @@ function IngredientPage({ recipes, ingredientName }: IngredientPageProps) {
           <div className="m-5 border-2" key={recipe.id} style={{ width: '312px' }}>
             <Image alt={recipe.title} width={312} height={231} src={recipe.imageURL} />
             <div className="w-full p-2">
-              <Link href={recipe.spoonacularURL} className="text-lg font-semibold hover:underline">{recipe.title}</Link>
+              <Link
+                href={recipe.spoonacularURL}
+                rel="noopener noreferrer"
+                target="_blank"
+                className="text-lg font-semibold hover:underline"
+              >
+                {recipe.title}
+              </Link>
             </div>
           </div>
         ))}

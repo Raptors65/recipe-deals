@@ -42,9 +42,8 @@ export default function SelectStore({ stores }: SelectStoreProps) {
 export const getStaticProps: GetStaticProps<SelectStoreProps> = async () => {
   let stores = await getLoblawsStores();
   stores = [...stores, ...await getNoFrillsStores()];
-  // TODO: remove store ID filter once public
   return {
-    props: { stores: stores.filter((store) => store.visible && ['1010', '1019', '3631', '3925'].includes(store.id)) },
+    props: { stores: stores.filter((store) => store.visible) },
     revalidate: 60 * 60,
   };
 };

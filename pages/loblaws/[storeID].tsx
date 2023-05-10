@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { getLoblawsProps } from '@/lib/loblaws';
+import { getLoblawsProps, getLoblawsStores } from '@/lib/loblaws';
 import { Badge, Price } from '@/types/loblaws';
 
 type LoblawsStoreProps = {
@@ -56,7 +56,9 @@ function LoblawsStore({ deals }: LoblawsStoreProps) {
               <ul className="list-disc ml-5">
                 {deal.itemsOnSale.map((item) => (
                   <li className="mb-2" key={item.link}>
-                    <Link href={item.link} className="font-semibold hover:underline">{item.name}</Link>
+                    <Link href={item.link} rel="noopener noreferrer" target="_blank" className="font-semibold hover:underline">
+                      {item.name}
+                    </Link>
                     <p className="text-sm">
                       Normal Price:
                       {' '}
@@ -104,19 +106,16 @@ export const getStaticProps: GetStaticProps<LoblawsStoreProps> = async (context)
   };
 };
 
-// TODO: add back this code if I ever start paying for the API.
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const stores = await getLoblawsStores();
-//   const paths = stores
-//     .filter((store) => store.visible)
-//     .map((store) => ({ params: { storeID: store.id } }));
+export const getStaticPaths: GetStaticPaths = async () => {
+  const stores = await getLoblawsStores();
+  const paths = stores
+    .filter((store) => store.visible)
+    .map((store) => ({ params: { storeID: store.id } }));
 
-//   return {
-//     paths,
-//     fallback: 'blocking',
-//   };
-// };
-
-export const getStaticPaths: GetStaticPaths = async () => ({ paths: [], fallback: 'blocking' });
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+};
 
 export default LoblawsStore;
