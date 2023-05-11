@@ -8,12 +8,6 @@ const nextConfig = {
         port: '',
         pathname: '/recipeImages/*'
       },
-      {
-        protocol: 'https',
-        hostname: 'tailwindui.com',
-        port: '',
-        pathname: '/img/logos/*'
-      }
     ]
   },
   reactStrictMode: true,

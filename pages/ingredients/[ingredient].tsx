@@ -49,7 +49,7 @@ function IngredientPage({ recipes, ingredientName }: IngredientPageProps) {
 
 export const getStaticProps: GetStaticProps<IngredientPageProps> = async (context) => {
   const ingredientName = context.params!.ingredient as string;
-  const recipes = await getRecipes([ingredientName], 5);
+  const recipes = await getRecipes([ingredientName], 100);
 
   const recipesProp = recipes.map((recipe) => ({
     title: recipe.title,
