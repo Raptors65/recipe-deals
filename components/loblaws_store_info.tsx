@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import React from 'react';
-import { Store } from '@/types/loblaws';
+import { FilteredStoreInfo } from '@/types/loblaws';
 
 type LoblawsStoreInfoProps = {
-  store: Store
+  store: FilteredStoreInfo
 };
 
 export default function LoblawsStoreInfo({ store }: LoblawsStoreInfoProps) {
@@ -11,7 +11,7 @@ export default function LoblawsStoreInfo({ store }: LoblawsStoreInfoProps) {
     <div className="flex w-full justify-between gap-x-5 border-2 p-5">
       <div>
         <h1>{store.name}</h1>
-        <p>{store.address.formattedAddress}</p>
+        <p>{store.address}</p>
         <p>{store.openNowResponseData.hours}</p>
       </div>
       <div>

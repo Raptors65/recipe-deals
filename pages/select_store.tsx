@@ -4,10 +4,12 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getLoblawsStores } from '@/lib/loblaws';
 import LoblawsStoreInfo from '@/components/loblaws_store_info';
-import { Store } from '@/types/loblaws';
+import { FilteredStoreInfo } from '@/types/loblaws';
 import { getNoFrillsStores } from '@/lib/nofrills';
 
-type SelectStoreProps = { stores: Store[] };
+type SelectStoreProps = {
+  stores: FilteredStoreInfo[]
+};
 
 export default function SelectStore({ stores }: SelectStoreProps) {
   const [query, setQuery] = useState('');
@@ -29,7 +31,7 @@ export default function SelectStore({ stores }: SelectStoreProps) {
       />
       <div className="w-full flex-wrap">
         {stores.filter((store) => ((store.name.toLowerCase().includes(query)
-                                  || store.address.formattedAddress.toLowerCase().includes(query))
+                                  || store.address.toLowerCase().includes(query))
                                   && (chain === '' || store.storeBannerId === chain)))
           .slice(0, 10).map((store) => (
             <LoblawsStoreInfo key={store.id} store={store} />
@@ -43,7 +45,21 @@ export const getStaticProps: GetStaticProps<SelectStoreProps> = async () => {
   let stores = await getLoblawsStores();
   stores = [...stores, ...await getNoFrillsStores()];
   return {
-    props: { stores: stores.filter((store) => store.visible) },
+    props: {
+      stores: stores.filter((store) => store.visible)
+        .map(
+          ({
+            id, address, name, openNowResponseData, storeBannerId, geoPoint,
+          }) => ({
+            id,
+            address: address.formattedAddress,
+            name,
+            openNowResponseData,
+            storeBannerId,
+            geoPoint,
+          }),
+        ),
+    },
     revalidate: 60 * 60,
   };
 };

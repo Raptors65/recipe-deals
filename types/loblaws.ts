@@ -133,7 +133,7 @@ export type LoblawsResponse = {
 
 // STORES
 
-type Address = {
+export type Address = {
   country: string
   formattedAddress: string
   line1: string
@@ -152,7 +152,7 @@ type GeoPoint = {
   longitude: number
 };
 
-type OpenNowResponseData = {
+export type OpenNowResponseData = {
   date: string
   hours: string
   openNow: boolean
@@ -179,4 +179,13 @@ export type Store = {
   storeId: string
   timeZone: string
   visible: boolean
+};
+
+export type FilteredStoreInfo = {
+  id: string,
+  address: string,
+  name: string,
+  openNowResponseData: OpenNowResponseData,
+  storeBannerId: string,
+  geoPoint: GeoPoint,
 };

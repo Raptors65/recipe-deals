@@ -30,7 +30,7 @@ function LoblawsStore({ deals }: LoblawsStoreProps) {
         <title>Deals at Loblaws</title>
       </Head>
       <p>The following are on sale:</p>
-      <ul className="divide-y divide-gray-100 w-1/2">
+      <ul className="divide-y divide-gray-100 w-full md:w-3/4 lg:w-96">
         {deals.map((deal) => (
           <Disclosure
             as="li"

@@ -96,7 +96,7 @@ export default function Navbar() {
               <Image
                 width={32}
                 height={32}
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                src="/images/logo.svg"
                 alt=""
               />
             </Link>
