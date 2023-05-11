@@ -12,10 +12,14 @@ type SelectStoreProps = {
 };
 
 export default function SelectStore({ stores }: SelectStoreProps) {
-  const [query, setQuery] = useState('');
   const router = useRouter();
 
-  const chain = router.query.chain || '';
+  const [query, setQuery] = useState('');
+  const [hasSearched, setHasSearched] = useState(false);
+
+  if (!hasSearched && typeof router.query.chain === 'string' && router.query.chain !== query) {
+    setQuery(router.query.chain);
+  }
 
   return (
     <>
@@ -27,12 +31,14 @@ export default function SelectStore({ stores }: SelectStoreProps) {
         placeholder="Search store..."
         type="text"
         value={query}
-        onChange={(event) => setQuery(event.target.value)}
+        onChange={(event) => {
+          setQuery(event.target.value);
+          if (!hasSearched) setHasSearched(true);
+        }}
       />
       <div className="w-full flex-wrap">
-        {stores.filter((store) => ((store.name.toLowerCase().includes(query)
-                                  || store.address.toLowerCase().includes(query))
-                                  && (chain === '' || store.storeBannerId === chain)))
+        {stores.filter((store) => ((((store.storeBannerId === 'loblaw' && 'Loblaws - ') + store.name).toLowerCase().includes(query.toLowerCase())
+                                  || store.address.toLowerCase().includes(query.toLowerCase()))))
           .slice(0, 10).map((store) => (
             <LoblawsStoreInfo key={store.id} store={store} />
           ))}

@@ -10,7 +10,11 @@ export default function LoblawsStoreInfo({ store }: LoblawsStoreInfoProps) {
   return (
     <div className="flex w-full justify-between gap-x-5 border-2 p-5">
       <div>
-        <h1>{store.name}</h1>
+        <h1>
+          {store.storeBannerId === 'loblaw' && 'Loblaws - '}
+          {' '}
+          {store.name}
+        </h1>
         <p>{store.address}</p>
         <p>{store.openNowResponseData.hours}</p>
       </div>
