@@ -102,7 +102,7 @@ export const getStaticProps: GetStaticProps<LoblawsStoreProps> = async (context)
     props: {
       deals,
     },
-    revalidate: 60 * 60 * 24 * 7,
+    revalidate: 60 * 60 * 24,
   };
 };
 
