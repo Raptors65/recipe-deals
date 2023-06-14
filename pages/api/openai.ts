@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           content: `Generate a recipe that uses ${ingredient}.`,
         },
       ],
-      max_tokens: 500,
+      max_tokens: 50,
       temperature: 1,
       stream: true,
     }, { responseType: 'stream' });
