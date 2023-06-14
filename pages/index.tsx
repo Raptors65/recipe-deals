@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Recipe Deals</title>
+        <title>Home - Recipe Deals</title>
       </Head>
       <HeroSection />
     </>
