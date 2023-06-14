@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import type { GetStaticProps } from 'next';
 import Head from 'next/head';
@@ -12,26 +12,43 @@ export default function GenerateRecipe({ ingredients }: GenerateRecipeProps) {
   const { query } = useRouter();
   const [ingredientQuery, setIngredientQuery] = useState(ingredients[0]);
   const [hasEditedQuery, setHasEditedQuery] = useState(false);
-  const [hasGenerated, setHasGenerated] = useState(false);
-  const openaiElement = useRef<HTMLParagraphElement>(null);
+  const [generating, setGenerating] = useState(false);
+  const [recipe, setRecipe] = useState('');
 
-  const sendAIRequest = () => {
-    setHasGenerated(true);
+  const sendAIRequest = async () => {
+    setGenerating(true);
 
-    openaiElement.current!.innerHTML = '';
-
-    const params = new URLSearchParams({
-      ingredient: ingredientQuery,
+    const response = await fetch('/api/openai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ingredient: ingredientQuery,
+      }),
     });
-    const evtSource = new EventSource(`/api/openai?${params.toString()}`);
-    evtSource.onmessage = (event) => {
-      if (event.data === '[DONE]') {
-        evtSource.close();
-        setHasGenerated(false);
-        return;
-      }
-      openaiElement.current!.innerHTML += event.data;
-    };
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    const data = response.body;
+    if (!data) {
+      return;
+    }
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    while (!done) {
+      // eslint-disable-next-line no-await-in-loop
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+      setRecipe((r) => r + chunkValue);
+    }
+
+    setGenerating(false);
   };
 
   if (!hasEditedQuery && typeof query.ingredient === 'string' && query.ingredient !== ingredients[0]) {
@@ -53,14 +70,14 @@ export default function GenerateRecipe({ ingredients }: GenerateRecipeProps) {
           setIngredientQuery(target.value);
           if (!hasEditedQuery) setHasEditedQuery(true);
         }}
-        disabled={hasGenerated}
+        disabled={generating}
         className="shadow border border-gray-500 rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
       >
         {ingredients.map((ingredient) => (
           <option key={ingredient} value={ingredient}>{ingredient}</option>
         ))}
       </select>
-      {!hasGenerated && (
+      {!generating && (
         <button
           type="button"
           onClick={sendAIRequest}
@@ -69,7 +86,7 @@ export default function GenerateRecipe({ ingredients }: GenerateRecipeProps) {
           Generate
         </button>
       )}
-      <p className="mb-10" ref={openaiElement} />
+      <p className="mb-10 whitespace-pre-line">{recipe}</p>
     </>
   );
 }
