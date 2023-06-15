@@ -79,7 +79,7 @@ function LoblawsStore({ deals }: LoblawsStoreProps) {
                         <p className="text-sm">
                           Expires:
                           {' '}
-                          {item.deal.expiryDate?.slice(0, 10)}
+                          {item.deal.expiryDate?.slice(0, 10) ?? 'never'}
                         </p>
                       </li>
                     ))}
