@@ -8,7 +8,7 @@ export default async function handler(req: Request) {
   const { ingredient } = await req.json();
 
   const payload = {
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4o-mini',
     messages: [
       {
         role: 'user',
