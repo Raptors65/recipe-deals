@@ -1,6 +1,6 @@
 # Recipe Deals
 
-With grocery prices rising rapidly over the past few years, it is becoming increasingly difficult to cook affordable meals. This website aims to mitigate this issue by finding items on sale at grocery stores and then suggesting recipes that use these items. It scrapes grocery store websites to find the items on sale, then uses the Spoonacular API to find recipes with those items.
+With grocery prices rising rapidly over the past few years, it is becoming increasingly difficult to cook affordable meals. This website aims to mitigate this issue by finding items on sale at grocery stores and then suggesting recipes that use these items. It sends requests to grocery store websites to find the items on sale, then uses the Spoonacular API to find recipes with those items.
 
 This site was built using [Next.js](https://nextjs.org/), [React](https://react.dev/), and [Tailwind CSS](https://tailwindcss.com/) and connected to a [Postgres](https://www.postgresql.org/) database hosted on [Supabase](https://supabase.com/).
 
